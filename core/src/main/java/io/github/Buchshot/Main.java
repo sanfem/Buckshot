@@ -55,7 +55,7 @@ public class Main extends ApplicationAdapter {
     private BitmapFont His_Health;
     private BitmapFont OverPlay;
 
-    private boolean is_high_bullets=false;
+
     private Sprite high_bullets;
     AiLogic ai;
     private int currenstate;
@@ -64,8 +64,8 @@ public class Main extends ApplicationAdapter {
 
     @Override
     public void create() {
-        is_high_bullets=true;
-        //以上是测试数据;
+
+
 
         Null_bullets=new Sprite(new TextureRegion(new Texture(Gdx.files.internal("Bullets.png")),2,0,25/3,60));
         N_bulletsNumble=new BitmapFont();
@@ -216,7 +216,7 @@ public class Main extends ApplicationAdapter {
             Is_yourRound.draw(batch, "Please Wait", viewport.getWorldWidth() / 2 - 90, viewport.getWorldHeight() / 2);
             Is_yourRound.getData().setScale(2.5f);
         }
-        if (is_high_bullets && high_bullets != null) {
+        if (currentProp.is_high_bulletsPlay) {
             high_bullets.draw(batch);
         };
         batch.end();
@@ -225,7 +225,7 @@ public class Main extends ApplicationAdapter {
     private void input() {
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.A)) {
-            is_high_bullets = !is_high_bullets;
+             if(currentProp.is_high_bulletsPlay){gamelogic.SetHighBullet(currentProp);}
 
         }
         if(Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) {

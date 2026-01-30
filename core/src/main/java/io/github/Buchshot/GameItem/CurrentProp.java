@@ -15,6 +15,8 @@ public class CurrentProp implements Prop {
     public boolean GameOver;
     public boolean GameRound;
     public  int IsTureBu;
+    public boolean is_high_bullets;
+    public boolean is_high_bulletsPlay;
 
     public CurrentProp(){
 
@@ -34,6 +36,8 @@ public class CurrentProp implements Prop {
         GameOver=false;
         GameRound=true;
         IsTureBu=0;
+        is_high_bulletsPlay=true;
+        is_high_bullets=false;
     }//测试用
 
 }

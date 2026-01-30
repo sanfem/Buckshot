@@ -36,7 +36,14 @@ public class Gamelogic {
             }
         }
 
+        public void SetHighBullet(CurrentProp currentProp){
+            currentProp.is_high_bulletsPlay=false;
+            currentProp.is_high_bullets=true;
+        }
+
         public int RoundOver(int To_who,CurrentProp currentProp){
+            int Tem=1;
+            if(currentProp.is_high_bullets) Tem=2;
             int cnt=currentProp.cnt;
             boolean flag=false,flag1=false;
             int Hea,Hea1;
@@ -44,7 +51,7 @@ public class Gamelogic {
             else  {Hea=currentProp.Health2;Hea1=currentProp.Health1;}
             if(To_who==1){
                 if(JudgeMent(currentProp)) {
-                    Hea--;
+                    Hea-=Tem;
                     currentProp.T_bn--;
                     currentProp.IsTureBu=1;
                 }
@@ -52,7 +59,7 @@ public class Gamelogic {
             }
             else if(To_who==2) {
                 if (JudgeMent(currentProp)) {
-                    Hea1--;
+                    Hea1-=Tem;
                     currentProp.IsTureBu=1;
                     currentProp.T_bn--;
                 }
@@ -64,12 +71,10 @@ public class Gamelogic {
             if(flag) { currentProp.Health1=Hea;currentProp.Health2=Hea1;}
             else  { currentProp.Health2=Hea;currentProp.Health1=Hea1;}
             currentProp.cnt=cnt;
+            currentProp.is_high_bullets=false;
             if(currentProp.N_bn<=0||currentProp.T_bn<=0){CreateRound(currentProp);}
             if(Hea<=0) return 1;
             else if(Hea1<=0) return -1;
             else return 0;
         }
-
-
-
 }
