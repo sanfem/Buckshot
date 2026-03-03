@@ -1,31 +1,36 @@
 package io.github.Buchshot;
 
 import com.badlogic.gdx.ApplicationAdapter;
-import com.badlogic.gdx.Audio;
+//import com.badlogic.gdx.Audio;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.*;
-import com.badlogic.gdx.scenes.scene2d.Group;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+//import com.badlogic.gdx.scenes.scene2d.Group;
+//import com.badlogic.gdx.scenes.scene2d.InputEvent;
+// com.badlogic.gdx.scenes.scene2d.Stage;
+//import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+//import com.badlogic.gdx.scenes.scene2d.ui.Table;
+//import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+//import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Queue;
 import com.badlogic.gdx.utils.ScreenUtils;
-import com.badlogic.gdx.utils.viewport.FillViewport;
-import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
+//import com.badlogic.gdx.utils.viewport.FillViewport;
+//import com.badlogic.gdx.utils.viewport.FitViewport;
+//import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import io.github.Buchshot.GameItem.CurrentProp;
 import io.github.Buchshot.Logic.AiLogic;
 import io.github.Buchshot.Logic.Gamelogic;
 
-import java.util.IllegalFormatWidthException;
-import java.util.Random;
+import java.util.LinkedList;
+import java.util.Timer;
+import java.util.TimerTask;
+
+//import java.util.IllegalFormatWidthException;
+//import java.util.Random;
 
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
 public class Main extends ApplicationAdapter {
@@ -48,25 +53,28 @@ public class Main extends ApplicationAdapter {
     private Sound GunTrue;
     private Sound GunFalse;
 
+
+    private Sprite hanfcuffs;
+
     private BitmapFont N_bulletsNumble;
     private BitmapFont T_bulletsNumble;
     private BitmapFont Is_yourRound;
     private BitmapFont My_Health;
     private BitmapFont His_Health;
     private BitmapFont OverPlay;
+    private BitmapFont PlayText;
 
-
+    private LinkedList<Sound> SoundPlayer;
     private Sprite high_bullets;
     AiLogic ai;
     private int currenstate;
     private static final float INPUT_COOLDOWN_TIME = 0.3f;
     boolean IsTrueBu=false;
 
+
     @Override
     public void create() {
-
-
-
+        SoundPlayer = new LinkedList<>();
         Null_bullets=new Sprite(new TextureRegion(new Texture(Gdx.files.internal("Bullets.png")),2,0,25/3,60));
         N_bulletsNumble=new BitmapFont();
         True_bullets=new Sprite(new TextureRegion(new Texture(Gdx.files.internal("Bullets.png")),13,2,25/3,60));
@@ -75,7 +83,11 @@ public class Main extends ApplicationAdapter {
         My_Health=new BitmapFont();
         His_Health=new BitmapFont();
         OverPlay=new BitmapFont();
-        ai=new AiLogic();
+        PlayText=new BitmapFont();
+        hanfcuffs=new Sprite(new Texture(Gdx.files.internal("handcuffs .png")));
+        ai=new AiLogic(currentProp);
+        Thread aiThread=new Thread(ai);
+        aiThread.start();
 
         high_bullets=new Sprite(new TextureRegion(new Texture(Gdx.files.internal("Bullets.png")),49,2,25/3,120));
 
@@ -92,16 +104,17 @@ public class Main extends ApplicationAdapter {
         sounds.setLooping(true); // 设置循环播放，避免手动检查
         sounds.setVolume(0.5f); // 设置音量
         sounds.play();
+
     }
 
     @Override
     public void render() {
 
-
         if(!currentProp.GameOver) {
-            SoundPlay();
-            if(currentProp.cnt%2==1)
-            {
+
+
+            if(currentProp.GunReportflag==0){GunReport.play();;currentProp.GunReportflag=1;}
+            if(currentProp.cnt % 2 == 1) {
                 input();
             }
             else
@@ -109,10 +122,10 @@ public class Main extends ApplicationAdapter {
                 OrtherInput();
             }
             if(currentProp.IsTureBu==1){
-                GunTrue.play();
+               GunTrue.play();
                 currentProp.IsTureBu=0;
                 try {
-                    Thread.sleep(500);
+                    Thread.sleep(10);
                 }catch (InterruptedException e){
                     e.printStackTrace();
                 }
@@ -120,30 +133,33 @@ public class Main extends ApplicationAdapter {
             else if(currentProp.IsTureBu==-1){
                 GunFalse.play();
                 currentProp.IsTureBu=0;
+                SoundPlayer.add(GunFalse);
                 try {
                     Thread.sleep(500);
                 }catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
+
             drow();
         }
         else{
+            if(currentProp.IsTureBu==1) {
+                GunTrue.play();
+                currentProp.IsTureBu = 0;
+            }
             Overdrow();
             Overinput();
         }
     }
 
 
-    private void SoundPlay(){
-        if(currentProp.GameRound){
-            GunReport.play();
-            currentProp.GameRound=false;
-        }
-    }
-    private void OrtherInput()
+
+    private  void OrtherInput()
     {
-        ai.relation(currentProp);
+        synchronized (ai){
+            ai.notify();
+        }
     }
 
     private void Overinput() {
@@ -186,6 +202,8 @@ public class Main extends ApplicationAdapter {
         Null_bullets.setPosition(0,viewport.getWorldHeight()/2);
         True_bullets.setPosition(viewport.getWorldWidth()- (float) 25 /3,viewport.getWorldHeight()/2);
         high_bullets.setPosition(50,0);
+        hanfcuffs.setPosition(150,0);
+        hanfcuffs.setSize(50, 100);
 
         ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);
 
@@ -209,15 +227,21 @@ public class Main extends ApplicationAdapter {
         His_Health.getData().setScale(2.5f);
 
         if(currentProp.cnt%2==1) {
-            Is_yourRound.draw(batch, "Your Round", viewport.getWorldWidth() / 2 - 90, viewport.getWorldHeight() / 2);
+            Is_yourRound.draw(batch,"Your Bound" , viewport.getWorldWidth() / 2 - 90, viewport.getWorldHeight() / 2);
             Is_yourRound.getData().setScale(2.5f);
         }
         else{
-            Is_yourRound.draw(batch, "Please Wait", viewport.getWorldWidth() / 2 - 90, viewport.getWorldHeight() / 2);
+            Is_yourRound.draw(batch, "please wait", viewport.getWorldWidth() / 2 - 90, viewport.getWorldHeight() / 2);
             Is_yourRound.getData().setScale(2.5f);
         }
+        PlayText.draw(batch, currentProp.PlayText, viewport.getWorldWidth() / 2 - 90, viewport.getWorldHeight() / 2-50);
+        PlayText.getData().setScale(1.0f);
+
         if (currentProp.is_high_bulletsPlay) {
             high_bullets.draw(batch);
+        };
+        if (currentProp.is_handcuffsPlay) {
+             hanfcuffs.draw(batch);
         };
         batch.end();
     }
@@ -226,7 +250,7 @@ public class Main extends ApplicationAdapter {
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.A)) {
              if(currentProp.is_high_bulletsPlay){gamelogic.SetHighBullet(currentProp);}
-
+             currentProp.PlayText="You using High Bullets";
         }
         if(Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) {
             int ZZ=gamelogic.RoundOver(1,currentProp );
@@ -235,6 +259,10 @@ public class Main extends ApplicationAdapter {
         if(Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
             int ZZ=gamelogic.RoundOver(2,currentProp );
             gamelogic.IsGameOver(ZZ,currentProp);
+        }
+        if(Gdx.input.isKeyJustPressed(Input.Keys.S)){
+            if(currentProp.is_handcuffsPlay){gamelogic.Sethandcuffs(currentProp);}
+            currentProp.PlayText="You using handcuffs";
         }
     }
 
@@ -256,6 +284,15 @@ public class Main extends ApplicationAdapter {
         My_Health.dispose();
         His_Health.dispose();
         OverPlay.dispose();
+        GunReport.dispose();
+        GunFalse.dispose();
+        GunTrue.dispose();
+        N_bulletsNumble.dispose();
+         T_bulletsNumble.dispose();
+         My_Health.dispose();
+          His_Health.dispose();
+          OverPlay.dispose();
+          PlayText.dispose();
     }
 
     public void Load_player(){

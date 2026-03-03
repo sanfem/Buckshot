@@ -1,8 +1,10 @@
 package io.github.Buchshot.GameItem;
 
 import java.util.Random;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class CurrentProp implements Prop {
+
     public int cnt;
     public int N_bn;
     public int T_bn;
@@ -17,27 +19,34 @@ public class CurrentProp implements Prop {
     public  int IsTureBu;
     public boolean is_high_bullets;
     public boolean is_high_bulletsPlay;
+    public boolean is_handcuffs;
+    public boolean is_handcuffsPlay;
+    public int GunReportflag=0;
+    public String PlayText;
 
-    public CurrentProp(){
+    public CurrentProp() {
 
-        cnt=1;
-        H_bn=1;
-        R_bn=1;
-        O_bn=1;
-        P_bn=1;
-        Health1=2;
-        Health2=2;
+        cnt = 1;
+        H_bn = 1;
+        R_bn = 1;
+        O_bn = 1;
+        P_bn = 1;
+        Health1 = 2;
+        Health2 = 2;
         Random rand = new Random(System.currentTimeMillis());
-        int r= (rand.nextInt(10)+1);
-        r=r+(r+1)%2;
-        int N =rand.nextInt(r)+2;
-        N_bn = r+N+(r+N+1)%2;
+        int r = (rand.nextInt(10) + 1);
+        r = r + (r + 1) % 2;
+        int N = rand.nextInt(r) + 2;
+        N_bn = r + N + (r + N + 1) % 2;
         T_bn = N;
-        GameOver=false;
-        GameRound=true;
-        IsTureBu=0;
-        is_high_bulletsPlay=true;
-        is_high_bullets=false;
-    }//测试用
+        GameOver = false;
+        GameRound = true;
+        IsTureBu = 0;
+        is_high_bulletsPlay = true;
+        is_high_bullets = false;
+        is_handcuffs=false;
+        is_handcuffsPlay=true;
+        PlayText = "";
+    }
 
 }

@@ -41,6 +41,11 @@ public class Gamelogic {
             currentProp.is_high_bullets=true;
         }
 
+        public void Sethandcuffs(CurrentProp currentProp){
+            currentProp.is_handcuffsPlay =false;
+            currentProp.is_handcuffs=true;
+        }
+
         public int RoundOver(int To_who,CurrentProp currentProp){
             int Tem=1;
             if(currentProp.is_high_bullets) Tem=2;
@@ -70,8 +75,11 @@ public class Gamelogic {
             currentProp.GameRound=true;
             if(flag) { currentProp.Health1=Hea;currentProp.Health2=Hea1;}
             else  { currentProp.Health2=Hea;currentProp.Health1=Hea1;}
-            currentProp.cnt=cnt;
+            if(!currentProp.is_handcuffs) currentProp.cnt=cnt;
+            else currentProp.is_handcuffs=false;
             currentProp.is_high_bullets=false;
+            currentProp.GunReportflag=0;
+            currentProp.PlayText=" ";
             if(currentProp.N_bn<=0||currentProp.T_bn<=0){CreateRound(currentProp);}
             if(Hea<=0) return 1;
             else if(Hea1<=0) return -1;
