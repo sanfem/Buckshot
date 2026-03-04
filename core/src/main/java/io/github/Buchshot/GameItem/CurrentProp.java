@@ -23,6 +23,10 @@ public class CurrentProp implements Prop {
     public boolean is_handcuffsPlay;
     public int GunReportflag=0;
     public String PlayText;
+    public int is_Mirror=0;
+    public boolean is_MirrorPlay;
+    public boolean is_PillPlay;
+
 
     public CurrentProp() {
 
@@ -46,7 +50,10 @@ public class CurrentProp implements Prop {
         is_high_bullets = false;
         is_handcuffs=false;
         is_handcuffsPlay=true;
+        is_MirrorPlay=true;
         PlayText = "";
+
+        is_PillPlay=true;
     }
 
 }

@@ -41,9 +41,25 @@ public class Gamelogic {
             currentProp.is_high_bullets=true;
         }
 
+        public void SetMirror(CurrentProp currentProp){
+            currentProp.is_MirrorPlay=false;
+            currentProp.is_Mirror=1;
+        }
+
         public void Sethandcuffs(CurrentProp currentProp){
             currentProp.is_handcuffsPlay =false;
             currentProp.is_handcuffs=true;
+        }
+
+        public void setPill(CurrentProp currentProp){
+            currentProp.is_PillPlay=false;
+
+            if(currentProp.cnt%2==1){
+                 currentProp.Health1++;
+            }
+            else{
+                currentProp.Health2++;
+            }
         }
 
         public int RoundOver(int To_who,CurrentProp currentProp){
@@ -55,7 +71,7 @@ public class Gamelogic {
             if(cnt%2==1) {Hea=currentProp.Health1;Hea1=currentProp.Health2;flag=true;}
             else  {Hea=currentProp.Health2;Hea1=currentProp.Health1;}
             if(To_who==1){
-                if(JudgeMent(currentProp)) {
+                if(JudgeMent(currentProp)||currentProp.is_Mirror++==2) {
                     Hea-=Tem;
                     currentProp.T_bn--;
                     currentProp.IsTureBu=1;
@@ -63,7 +79,7 @@ public class Gamelogic {
                 else {currentProp.IsTureBu=-1;}
             }
             else if(To_who==2) {
-                if (JudgeMent(currentProp)) {
+                if (JudgeMent(currentProp)||currentProp.is_Mirror++==2) {
                     Hea1-=Tem;
                     currentProp.IsTureBu=1;
                     currentProp.T_bn--;
@@ -79,6 +95,7 @@ public class Gamelogic {
             else currentProp.is_handcuffs=false;
             currentProp.is_high_bullets=false;
             currentProp.GunReportflag=0;
+            if(currentProp.is_Mirror==1) currentProp.is_Mirror++;
             currentProp.PlayText=" ";
             if(currentProp.N_bn<=0||currentProp.T_bn<=0){CreateRound(currentProp);}
             if(Hea<=0) return 1;

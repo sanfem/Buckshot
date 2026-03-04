@@ -55,6 +55,7 @@ public class Main extends ApplicationAdapter {
 
 
     private Sprite hanfcuffs;
+    private Sprite Mirror;
 
     private BitmapFont N_bulletsNumble;
     private BitmapFont T_bulletsNumble;
@@ -71,10 +72,15 @@ public class Main extends ApplicationAdapter {
     private static final float INPUT_COOLDOWN_TIME = 0.3f;
     boolean IsTrueBu=false;
 
+    private Sprite Pill;
 
     @Override
     public void create() {
-        SoundPlayer = new LinkedList<>();
+        Pill =new Sprite(new Texture(Gdx.files.internal("pill.png")));
+        Pill.setPosition(450,0);
+        Pill.setSize(150,50);
+
+        Mirror =new Sprite(new Texture(Gdx.files.internal("Mirror.png")));
         Null_bullets=new Sprite(new TextureRegion(new Texture(Gdx.files.internal("Bullets.png")),2,0,25/3,60));
         N_bulletsNumble=new BitmapFont();
         True_bullets=new Sprite(new TextureRegion(new Texture(Gdx.files.internal("Bullets.png")),13,2,25/3,60));
@@ -204,6 +210,8 @@ public class Main extends ApplicationAdapter {
         high_bullets.setPosition(50,0);
         hanfcuffs.setPosition(150,0);
         hanfcuffs.setSize(50, 100);
+        Mirror.setPosition(300,0);
+        Mirror.setSize(50,100);
 
         ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);
 
@@ -243,6 +251,12 @@ public class Main extends ApplicationAdapter {
         if (currentProp.is_handcuffsPlay) {
              hanfcuffs.draw(batch);
         };
+        if (currentProp.is_MirrorPlay) {
+            Mirror.draw(batch);
+        };
+        if(currentProp.is_PillPlay){
+            Pill.draw(batch);
+        }
         batch.end();
     }
 
@@ -263,6 +277,14 @@ public class Main extends ApplicationAdapter {
         if(Gdx.input.isKeyJustPressed(Input.Keys.S)){
             if(currentProp.is_handcuffsPlay){gamelogic.Sethandcuffs(currentProp);}
             currentProp.PlayText="You using handcuffs";
+        }
+        if(Gdx.input.isKeyJustPressed(Input.Keys.D)){
+            if(currentProp.is_handcuffsPlay){gamelogic.SetMirror(currentProp);}
+            currentProp.PlayText="You using Mirror.Next Bullets is true";
+        }
+        if(Gdx.input.isKeyJustPressed(Input.Keys.F)){
+            if(currentProp.is_PillPlay){gamelogic.setPill(currentProp);}
+            currentProp.PlayText="You using Pill";
         }
     }
 
